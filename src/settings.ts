@@ -20,6 +20,7 @@ export interface PomoSettings {
 	logFile: string;
 	logText: string;
 	logToDaily: boolean;
+	logSubtitle: string;
 	logActiveNote: boolean;
 	fancyStatusBar: boolean;
 	whiteNoise: boolean;
@@ -40,6 +41,7 @@ export const DEFAULT_SETTINGS: PomoSettings = {
 	logging: false,
 	logFile: "Pomodoro Log.md",
 	logToDaily: false,
+	logSubtitle: "",
 	logText: "[🍅] dddd, MMMM DD YYYY, h:mm A",
 	logActiveNote: false,
 	fancyStatusBar: false,
@@ -243,6 +245,16 @@ export class PomoSettingTab extends PluginSettingTab {
 						}
 						this.plugin.saveSettings();
 
+					}));
+
+			new Setting(containerEl)
+				.setName("Log to subtitle")
+				.setDesc("Log to subtitle of log file")
+				.addText(text => text
+					.setValue(this.plugin.settings.logSubtitle.toString())
+					.onChange(value => {
+						this.plugin.settings.logSubtitle = value;
+						this.plugin.saveSettings();
 					}));
 	
 

@@ -294,10 +294,25 @@ export class Timer {
 	//from Note Refactor plugin by James Lynch, https://github.com/lynchjames/note-refactor-obsidian/blob/80c1a23a1352b5d22c70f1b1d915b4e0a1b2b33f/src/obsidian-file.ts#L69
 	async appendFile(filePath: string, logText: string): Promise<void> {
 		let existingContent = await this.plugin.app.vault.adapter.read(filePath);
-		if (existingContent.length > 0) {
-			existingContent = existingContent + '\r';
+		let subtitle = this.plugin.settings.logSubtitle.trim();
+		let content = "";
+
+		if (subtitle === "") {
+			content = existingContent;
+			if (existingContent.length > 0) {
+				content += '\r';
+			}
+			content += logText;
+		} else {
+			let index = existingContent.indexOf(subtitle);
+			if (index === -1) { //if not found, add it
+				content = existingContent + '\r' + subtitle + '\r' + logText;
+			} else {
+				content = existingContent.substring(0, index + subtitle.length) + 
+					'\r' + logText + existingContent.substring(index + subtitle.length);
+			}
 		}
-		await this.plugin.app.vault.adapter.write(filePath, existingContent + logText);
+		await this.plugin.app.vault.adapter.write(filePath, content);
 	}
 
 	setLogFile(){
